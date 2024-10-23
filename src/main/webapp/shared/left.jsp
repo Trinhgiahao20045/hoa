@@ -18,15 +18,13 @@
     <h3 class="card-header">Category</h3>  
         <ul class="list-group list-group-flush">
             
-            <%
-                for(Loai loai:dsLoai)
-                {
+           <%
+               for(Loai x : dsLoai)
+               {
             %>
-            
-            <li class="list-group-item"><a href="product.jsp?maloai=<%=loai.getMaloai() %>">         </a></li>
-            
+             <li class="list-group-item"><a class="text-decoration-none" href="product.jsp?maloai=<%=x.getMaloai() %>"> <%=x.getTenloai() %> </a></li>           
             <%
-                }
-             %>
+               }
+            %>
         </ul>   
 </div>
