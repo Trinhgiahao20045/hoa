@@ -33,6 +33,7 @@ public class LoaiDAO {
         }
         return ds;
     }
+    
     public static void main(String[] args) {
         LoaiDAO loaiDAO = new LoaiDAO();
         

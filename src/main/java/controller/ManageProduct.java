@@ -5,13 +5,18 @@
 package controller;
 
 import dao.HoaDAO;
+import dao.LoaiDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
+import java.sql.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import model.Hoa;
 
 /**
  *
@@ -32,36 +37,71 @@ public class ManageProduct extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
-        HoaDAO hoaDAO=new HoaDAO();
-        
-    String action="LIST";
-    if (request.getParameter("action")!=null)
-            {
-                action=request.getParameter("action");
-            }
-    
-    
+
+        HoaDAO hoaDAO = new HoaDAO();
+        LoaiDAO loaiDAO = new LoaiDAO();
+
+        String action = "LIST";
+        if (request.getParameter("action") != null) {
+            action = request.getParameter("action");
+        }
+
         switch (action) {
             case "LIST":
                 request.setAttribute("dsHoa", hoaDAO.getAll());
-                request.getRequestDispatcher("admin/list_product.jsp").forward(request, response);              
+                request.getRequestDispatcher("admin/list_product.jsp").forward(request, response);
                 break;
-                
-                 case "ADD":
-                request.setAttribute("dsHoa", hoaDAO.getAll());
-                request.getRequestDispatcher("admin/add_product.jsp").forward(request, response);              
+
+            case "ADD":
+                String method = request.getMethod();
+                if (method.equals("GET")) {
+                    //tra ve giao dien
+                    request.setAttribute("dsLoai",loaiDAO.getAll());
+                    request.getRequestDispatcher("admin/add_product.jsp").forward(request, response);
+                } else if (method.equals("POST")) {
+                    //xu ly them 1 san pham
+                    //n1
+                    String tenhoa = request.getParameter("tenhoa");
+                    double gia = Double.parseDouble(request.getParameter("gia"));
+                    Part part = request.getPart("hinh");
+                    int maloai = Integer.parseInt(request.getParameter("maloai"));
+                    //b2
+                    String realPath = request.getServletContext().getRealPath("assets/images/products");
+                    String filename = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+                    part.write(realPath + "/" + filename);
+                    //b3
+                    Hoa objInsert = new Hoa(0, tenhoa, gia, filename, maloai, new Date(new java.util.Date().getTime()));
+                    if (hoaDAO.Insert(objInsert)) {
+                        //them thanh cong
+                        request.setAttribute("success", "Thao tac them san pham thanh cong");
+                    } else {
+                        //thong bao that bai
+                        request.setAttribute("error", "thao tac them san pham that bai");
+                    }
+                    //chuyen tipe nguoi dung ve 
+                    request.setAttribute("error", "thao tac them san pham that bai");
+                }
                 break;
-                
-                 case "EDIT":
-                request.setAttribute("dsHoa", hoaDAO.getAll());
-                request.getRequestDispatcher("admin/edit_product.jsp").forward(request, response);              
+
+            case "EDIT":
+                //b1
+                int mahoa=Integer.parseInt(request.getParameter("mahoa"));
+                //b2
+                if(hoaDAO.Delete(mahoa))
+                {
+                    //thong bao thanh cong
+                    request.setAttribute("success", "Thao tac xoa san pham thanh cong");
+                }else
+                {
+                    request.setAttribute("error", "Thao tac xoa san pham that bai");
+                }
+                 //chuyen tipe nguoi dung ve 
+                    request.setAttribute("error", "Thao tac xoa san pham that bai");
                 break;
-                
-                
-                 case "DELETE":
+
+            case "DELETE":
                 request.setAttribute("dsHoa", hoaDAO.getAll());
-                request.getRequestDispatcher("dao/HoaDAO.java/Delete").forward(request, response);              
+                request.getRequestDispatcher("dao/HoaDAO.java/Delete").forward(request, response);
                 break;
             default:
                 throw new AssertionError();
