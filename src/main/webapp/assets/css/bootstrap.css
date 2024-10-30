@@ -133,7 +133,7 @@
 }
 
 [data-bs-theme=dark] {
-    --color-scheme: dark;
+    color-scheme: dark;
     --bs-body-color: #dfd7ca;
     --bs-body-color-rgb: 223, 215, 202;
     --bs-body-bg: #212529;
@@ -194,7 +194,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
     :root {
-        --scroll-behavior: smooth;
+        scroll-behavior: smooth;
     }
 }
 
@@ -281,7 +281,7 @@ abbr[title] {
     text-decoration: underline dotted;
     cursor: help;
     -webkit-text-decoration-skip-ink: none;
-    -text-decoration-skip-ink: none;
+    text-decoration-skip-ink: none;
 }
 
 address {

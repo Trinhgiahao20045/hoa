@@ -71,6 +71,29 @@ public class HoaDAO {
         }
         return ds;
     }
+    
+    //phuong thuc doc theo trang
+    public ArrayList<Hoa> getByPage(int pageIndex, int pageSize) {
+        ArrayList<Hoa> ds = new ArrayList<>();
+        String sql = "select * from Hoa order by mahoa offset ? rows fetch next ? rows only";
+        conn = DbContext.getConnection();
+        try {
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, (pageIndex-1)*pageSize);
+            ps.setInt(2, pageSize);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                ds.add(new Hoa(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getString(4), rs.getInt(5), rs.getDate(6)));
+            }
+        } catch (Exception ex) {
+            System.out.println("Loi:" + ex.toString());
+        }
+        return ds;
+    }
+    
+    
+    
+    
     //Phương thức thêm 1 sản phẩm (hoa) vào csdl
      public boolean Insert(Hoa hoa) {
         String sql = "insert into hoa (tenhoa,gia,hinh,maloai,ngaycapnhat) values (?,?,?,?,?)";

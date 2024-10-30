@@ -34,9 +34,13 @@ public class ManageProduct extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    
+    
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
 
         HoaDAO hoaDAO = new HoaDAO();
         LoaiDAO loaiDAO = new LoaiDAO();
@@ -48,8 +52,20 @@ public class ManageProduct extends HttpServlet {
 
         switch (action) {
             case "LIST":
-                request.setAttribute("dsHoa", hoaDAO.getAll());
-                request.getRequestDispatcher("admin/list_product.jsp").forward(request, response);
+               //tra ve giao diem liet ke danh sach san pham quan tri 
+                 int pageSize=5;
+                 int pageIndex=1;
+                 if(request.getParameter("page")!=null)
+                 {
+                     pageIndex=Integer.parseInt(request.getParameter("page"));
+                 }
+                 
+                 //tinh tong so trang
+                 int sumOfPage =(int)Math.ceil((double)hoaDAO.getAll().size()/pageSize);
+                 request.setAttribute("dsHoa", hoaDAO.getByPage(pageIndex, pageSize));
+                 request.setAttribute("sumOfPage", sumOfPage);
+                 request.setAttribute("pageIndex", pageIndex);
+                 request.getRequestDispatcher("admin/list_product.jsp").forward(request, response);
                 break;
 
             case "ADD":
